@@ -1,0 +1,31 @@
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> dict(wordDict.begin(), wordDict.end());
+        unordered_map<int, vector<string>> memo; // cache results by index
+        return dfs(s, 0, dict, memo);
+    }
+    
+    vector<string> dfs(string& s, int start, unordered_set<string>& dict,
+                       unordered_map<int, vector<string>>& memo) {
+        if (memo.count(start)) return memo[start];
+        vector<string> res;
+        
+        if (start == s.size()) {
+            res.push_back(""); // base case: empty string
+            return res;
+        }
+        
+        for (int end = start + 1; end <= s.size(); end++) {
+            string word = s.substr(start, end - start);
+            if (dict.count(word)) {
+                vector<string> sublist = dfs(s, end, dict, memo);
+                for (string sub : sublist) {
+                    res.push_back(word + (sub.empty() ? "" : " " + sub));
+                }
+            }
+        }
+        
+        return memo[start] = res;
+    }
+};
